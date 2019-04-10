@@ -46,8 +46,9 @@ INSTALLED_APPS = [
     'goods.apps.GoodsConfig',
     'trade.apps.TradeConfig',
     'user_operation.apps.UserOperationConfig',
+    'rest_framework',
     'crispy_forms',
-    'django_filters',
+    # 'django_filters',
     'xadmin',
 ]
 
@@ -139,3 +140,8 @@ MEDIA_URL = "/media/"
 # )
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+# REST_FRAMEWORK = {
+#     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+#     'PAGE_SIZE': 10
+# }
