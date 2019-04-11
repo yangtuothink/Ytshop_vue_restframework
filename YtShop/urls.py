@@ -19,8 +19,21 @@ import xadmin
 from YtShop.settings import MEDIA_ROOT
 from django.views.static import serve
 from rest_framework.documentation import include_docs_urls
+from rest_framework.routers import DefaultRouter
+from goods.views import GoodsListViewset
 
-from goods.views import GoodsListView
+# 使用 routers 的方式
+router = DefaultRouter()
+# 配置 goods 的 url
+# 注册后就不需要每个都写一个 url 了.这样集合一个就可以了
+router.register(r'goods', GoodsListViewset)
+
+# 利用 routers 之后就不需要这样手动指定了
+# 此方法必须要求继承 GenericViewSet 或者 ModelViewSet
+# 这样可以手动指定相关的方法
+# goods_list = GoodsListViewset.as_view({
+#     'get': 'list',
+# })
 
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
@@ -35,6 +48,8 @@ urlpatterns = [
     url(r'docs/$', include_docs_urls(title="羊驼生鲜")),
 
     # 商品列表页
-    url(r'goods/$', GoodsListView.as_view(), name="good-list"),
-
+    # url(r'goods/$', GoodsListViewset.as_view(), name="good-list"),  # 继承了 viewsets 之后, 重写了 as_view, 因此不需要这样做了
+    # url(r'goods/$', goods_list, name="good-list"),  # 利用了 routers 之后也不需要这么做了
+    url(r'^', include(router.urls)),  # 使用了routers 之后极大的简介, 不需要手动指定 请求方式的映射了
+    # 而且此方法涵盖了所有的 api 接口, 如果想添加接口就在 DefaultRouter() 里面注册去即可
 ]
