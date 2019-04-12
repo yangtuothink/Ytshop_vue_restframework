@@ -1,11 +1,16 @@
-from .serializers import GoodsSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Goods
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins
 from rest_framework import generics
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import viewsets
+from rest_framework import filters
+from rest_framework import serializers
+
+from .models import Goods, GoodsCategory
+from .serializers import GoodsSerializer
+from .filters import GoodsFilter
 
 
 # 自定义重写 分页 组件
@@ -17,10 +22,38 @@ class GoodsPagination(PageNumberPagination):
     ordering = ['id']
 
 
-class GoodsListViewset(viewsets.ReadOnlyModelViewSet):
-    queryset = Goods.objects.all()
-    serializer_class = GoodsSerializer
-    pagination_class = GoodsPagination
+# 商品列表
+class GoodsListViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Goods.objects.all()  # 筛选  get_queryset 方法和此属性等效
+    serializer_class = GoodsSerializer  # 序列化
+    pagination_class = GoodsPagination  # 分页
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
+    """
+    利用 django-filter 进行过滤
+    利用 drf自带的 filters.SearchFilter 进行搜索
+    利用 drf自带的 filters.OrderingFilter 进行排序
+    """
+    # filterset_fields = ('name', 'shop_price')  # 设置过滤字段, 此设置无法设置不存在的字段
+    filterset_class = GoodsFilter  # 设置自定义的过滤类, 可以设置自己定制的字段了, 与 filterset_fields 相互覆盖
+    search_fields = ('name', 'goods_brief', 'goods_desc')  # 设置 搜索字段
+    """
+    '^' 内容开头匹配
+    '=' 精准匹配
+    '@' 全文搜索（目前只支持Django的MySQL后端。）
+    '$' 后跟正则表达式
+    
+    search_fields = ('=name', ) 
+    """
+    ordering_fields = ('sold_num', 'add_time')  # 设置排序字段
+
+    # queryset 属性写了的话就不需要重写此方法
+    # 但是如果想自定义过滤规则则需要重写 get_queryset 方法
+    # def get_queryset(self):
+    #     queryset = Goods.objects.all()  # 此处是隐式查找, 不用担心数据过大, 不循环就不会真正的查
+    #     price_min = self.request.query_params.get("pirce_min", 0)  # 接收参数中的 pirce_min
+    #     if price_min:
+    #         queryset = queryset.filter(shop_price__gt=int(price_min))  # 查比 pirce_min 大的
+    #     return queryset  # 整个逻辑码下来还是有点繁琐 因此 django-filter 对此进行了相应的封装
 
     # 如果继承了 ListAPIView 连 get 都不需要重写啦 <generics.ListAPIView>
     # 如果不重写就会认为不接收此类型请求
@@ -122,3 +155,6 @@ class GoodsListViewset(viewsets.ReadOnlyModelViewSet):
         八阶段
             ModelViewSet 我全都有
     """
+
+
+

@@ -20,6 +20,7 @@ class UserProfile(AbstractUser):
         verbose_name_plural = verbose_name
 
     def __str__(self):
+        # return self.name  # 如果设置为 name, 因为 name 没设置默认值且可以为空会导致报错
         return self.username
 
 

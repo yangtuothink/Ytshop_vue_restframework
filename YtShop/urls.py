@@ -26,7 +26,7 @@ from goods.views import GoodsListViewset
 router = DefaultRouter()
 # 配置 goods 的 url
 # 注册后就不需要每个都写一个 url 了.这样集合一个就可以了
-router.register(r'goods', GoodsListViewset)
+router.register(r'goods', GoodsListViewset, base_name="goods")
 
 # 利用 routers 之后就不需要这样手动指定了
 # 此方法必须要求继承 GenericViewSet 或者 ModelViewSet
@@ -45,7 +45,7 @@ urlpatterns = [
     # media 路径请求
     url(r'^media/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT}),
 
-    url(r'docs/$', include_docs_urls(title="羊驼生鲜")),
+    url(r'docs/', include_docs_urls(title="羊驼生鲜")),  # 此处的 url 不要加 $
 
     # 商品列表页
     # url(r'goods/$', GoodsListViewset.as_view(), name="good-list"),  # 继承了 viewsets 之后, 重写了 as_view, 因此不需要这样做了
