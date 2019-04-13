@@ -48,11 +48,13 @@ INSTALLED_APPS = [
     'user_operation.apps.UserOperationConfig',
     'rest_framework',
     'crispy_forms',
-    'django_filters',
-    'xadmin',
+    'django_filters',  # 过滤组件
+    'xadmin',  # 后台组件
+    'corsheaders',  # 为解决跨域问题
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # 解决跨域问题的中间件
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -61,6 +63,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# 设置跨域请求
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'YtShop.urls'
 

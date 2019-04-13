@@ -9,7 +9,7 @@ from rest_framework import filters
 from rest_framework import serializers
 
 from .models import Goods, GoodsCategory
-from .serializers import GoodsSerializer
+from .serializers import GoodsSerializer, CategorySerializer
 from .filters import GoodsFilter
 
 
@@ -19,7 +19,7 @@ class GoodsPagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     page_query_param = "page"
     max_page_size = 100
-    ordering = ['id']
+    # ordering = ['id']
 
 
 # 商品列表
@@ -44,7 +44,7 @@ class GoodsListViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
     
     search_fields = ('=name', ) 
     """
-    ordering_fields = ('sold_num', 'add_time')  # 设置排序字段
+    ordering_fields = ('sold_num', 'shop_price')  # 设置排序字段
 
     # queryset 属性写了的话就不需要重写此方法
     # 但是如果想自定义过滤规则则需要重写 get_queryset 方法
@@ -157,4 +157,13 @@ class GoodsListViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
     """
 
 
-
+# 商品类型
+class CategoryViewset(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    """
+    list:
+        商品分类列表数据
+    retrieve:
+        获取商品分类详情
+    """
+    queryset = GoodsCategory.objects.filter(category_type=1)
+    serializer_class = CategorySerializer

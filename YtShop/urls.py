@@ -20,13 +20,15 @@ from YtShop.settings import MEDIA_ROOT
 from django.views.static import serve
 from rest_framework.documentation import include_docs_urls
 from rest_framework.routers import DefaultRouter
-from goods.views import GoodsListViewset
+from goods.views import GoodsListViewset,CategoryViewset
 
 # 使用 routers 的方式
 router = DefaultRouter()
 # 配置 goods 的 url
 # 注册后就不需要每个都写一个 url 了.这样集合一个就可以了
 router.register(r'goods', GoodsListViewset, base_name="goods")
+# 配置 categorys 的 url
+router.register(r'categorys', CategoryViewset, base_name="categorys")
 
 # 利用 routers 之后就不需要这样手动指定了
 # 此方法必须要求继承 GenericViewSet 或者 ModelViewSet
