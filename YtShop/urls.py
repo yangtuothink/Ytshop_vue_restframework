@@ -22,6 +22,7 @@ from django.views.static import serve
 from rest_framework.documentation import include_docs_urls
 from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken import views
+from rest_framework_jwt.views import obtain_jwt_token
 from goods.views import GoodsListViewset, CategoryViewset
 
 # 使用 routers 的方式
@@ -51,8 +52,11 @@ urlpatterns = [
 
     url(r'docs/', include_docs_urls(title="羊驼生鲜")),  # 此处的 url 不要加 $
 
-    # DRF 认证
-    url(r'^api-token-auth/', views.obtain_auth_token),
+    # DRF 自带的 token 认证
+    # url(r'^api-token-auth/', views.obtain_auth_token),
+
+    # DRF JWT 认证
+    url(r'^login/', obtain_jwt_token),
 
     # 商品列表页
     # url(r'goods/$', GoodsListViewset.as_view(), name="good-list"),  # 继承了 viewsets 之后, 重写了 as_view, 因此不需要这样做了
