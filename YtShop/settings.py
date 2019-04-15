@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import sys
+import datetime
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -137,16 +138,25 @@ USE_TZ = False  # 默认是Ture，时间是utc时间，由于我们要用本地�
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
+# 静态路径
 STATIC_URL = '/static/'
 
+# 用户上传文件路径
 MEDIA_URL = "/media/"
+
+# 自定义认证
+AUTHENTICATION_BACKENDS = (
+    'users.views.CustomBackend',
+)
 
 # STATICFILES_DIRS = (
 #     os.path.join(BASE_DIR, "static"),
 # )
 
+#
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
+# DRF 设置
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',  # jwt 方式认证
@@ -154,4 +164,12 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         # 'rest_framework.authentication.TokenAuthentication', # 被弃用的 token 方式认证
     )
+}
+
+# JWT 设置
+JWT_AUTH = {
+    # 过期时间
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=14),
+    # 设置语法关键词 默认是 JWT 设置成 Token 更加适用, 如果修改前后都要统一
+    'JWT_AUTH_HEADER_PREFIX': 'JWT',
 }
