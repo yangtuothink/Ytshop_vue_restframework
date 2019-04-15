@@ -14,13 +14,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url, include
+
 # from django.contrib import admin
 import xadmin
 from YtShop.settings import MEDIA_ROOT
 from django.views.static import serve
 from rest_framework.documentation import include_docs_urls
 from rest_framework.routers import DefaultRouter
-from goods.views import GoodsListViewset,CategoryViewset
+from rest_framework.authtoken import views
+from goods.views import GoodsListViewset, CategoryViewset
 
 # 使用 routers 的方式
 router = DefaultRouter()
@@ -48,6 +50,9 @@ urlpatterns = [
     url(r'^media/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT}),
 
     url(r'docs/', include_docs_urls(title="羊驼生鲜")),  # 此处的 url 不要加 $
+
+    # DRF 认证
+    url(r'^api-token-auth/', views.obtain_auth_token),
 
     # 商品列表页
     # url(r'goods/$', GoodsListViewset.as_view(), name="good-list"),  # 继承了 viewsets 之后, 重写了 as_view, 因此不需要这样做了

@@ -7,6 +7,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework import viewsets
 from rest_framework import filters
 from rest_framework import serializers
+from rest_framework.authentication import TokenAuthentication
 
 from .models import Goods, GoodsCategory
 from .serializers import GoodsSerializer, CategorySerializer
@@ -45,6 +46,8 @@ class GoodsListViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
     search_fields = ('=name', ) 
     """
     ordering_fields = ('sold_num', 'shop_price')  # 设置排序字段
+    # authentication_classes = (TokenAuthentication,)  # 设置当前视图的认证方式
+
 
     # queryset 属性写了的话就不需要重写此方法
     # 但是如果想自定义过滤规则则需要重写 get_queryset 方法
