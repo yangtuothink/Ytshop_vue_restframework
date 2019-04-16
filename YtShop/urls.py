@@ -24,6 +24,7 @@ from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken import views
 from rest_framework_jwt.views import obtain_jwt_token
 from goods.views import GoodsListViewset, CategoryViewset
+from users.views import SmsCodeViewset
 
 # 使用 routers 的方式
 router = DefaultRouter()
@@ -32,6 +33,9 @@ router = DefaultRouter()
 router.register(r'goods', GoodsListViewset, base_name="goods")
 # 配置 categorys 的 url
 router.register(r'categorys', CategoryViewset, base_name="categorys")
+
+# 配置手机验证码发送 的 url
+router.register(r'codes', SmsCodeViewset, base_name="codes")
 
 # 利用 routers 之后就不需要这样手动指定了
 # 此方法必须要求继承 GenericViewSet 或者 ModelViewSet
@@ -50,6 +54,7 @@ urlpatterns = [
     # media 路径请求
     url(r'^media/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT}),
 
+    # api 接口文档
     url(r'docs/', include_docs_urls(title="羊驼生鲜")),  # 此处的 url 不要加 $
 
     # DRF 自带的 token 认证

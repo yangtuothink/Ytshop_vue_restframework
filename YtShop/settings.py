@@ -173,3 +173,9 @@ JWT_AUTH = {
     # 设置语法关键词 默认是 JWT 设置成 Token 更加适用, 如果修改前后都要统一
     'JWT_AUTH_HEADER_PREFIX': 'JWT',
 }
+
+# 手机号码的验证正则式
+REGEX_MOBILE = "^1[358]\d{9}$|^147\d{8}$|^176\d{8}$"
+
+# 云片网的 APIKEY 设置
+APIKEY = "2480f562fe1a2a607e949346cb7673f8"
