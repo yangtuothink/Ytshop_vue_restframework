@@ -24,18 +24,23 @@ from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken import views
 from rest_framework_jwt.views import obtain_jwt_token
 from goods.views import GoodsListViewset, CategoryViewset
-from users.views import SmsCodeViewset
+from users.views import SmsCodeViewset, UserViewset
 
 # 使用 routers 的方式
 router = DefaultRouter()
+
 # 配置 goods 的 url
 # 注册后就不需要每个都写一个 url 了.这样集合一个就可以了
 router.register(r'goods', GoodsListViewset, base_name="goods")
+
 # 配置 categorys 的 url
 router.register(r'categorys', CategoryViewset, base_name="categorys")
 
 # 配置手机验证码发送 的 url
 router.register(r'codes', SmsCodeViewset, base_name="codes")
+
+# 配置用户注册的 url
+router.register(r'users', UserViewset, base_name="users")
 
 # 利用 routers 之后就不需要这样手动指定了
 # 此方法必须要求继承 GenericViewSet 或者 ModelViewSet
@@ -63,7 +68,7 @@ urlpatterns = [
     # DRF JWT 认证
     url(r'^login/', obtain_jwt_token),
 
-    # 商品列表页
+    # 所有注册 URL
     # url(r'goods/$', GoodsListViewset.as_view(), name="good-list"),  # 继承了 viewsets 之后, 重写了 as_view, 因此不需要这样做了
     # url(r'goods/$', goods_list, name="good-list"),  # 利用了 routers 之后也不需要这么做了
     url(r'^', include(router.urls)),  # 使用了routers 之后极大的简介, 不需要手动指定 请求方式的映射了
