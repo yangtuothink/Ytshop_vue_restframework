@@ -21,7 +21,3 @@ def create_user(sender, instance=None, created=False, **kwargs):    # created �
         # user 对象的保存一般是要伴随着 token 的, 这里已经使用 JWT 方式了, 因此就不需要这种 token 了.
 
 
-"""
-
-created  是否是新建
-"""

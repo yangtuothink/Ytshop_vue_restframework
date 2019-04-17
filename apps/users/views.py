@@ -7,6 +7,7 @@ from django.db.models import Q
 from rest_framework import viewsets, status, mixins
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.response import Response
+from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
 
 from YtShop.settings import APIKEY
 from users.models import VerifyCode
@@ -90,22 +91,30 @@ class UserViewset(CreateModelMixin, mixins.UpdateModelMixin, mixins.RetrieveMode
     #         return []
     #
     #     return []
-    #
-    # def create(self, request, *args, **kwargs):
-    #     serializer = self.get_serializer(data=request.data)
-    #     serializer.is_valid(raise_exception=True)
-    #     user = self.perform_create(serializer)
-    #
-    #     re_dict = serializer.data
-    #     payload = jwt_payload_handler(user)
-    #     re_dict["token"] = jwt_encode_handler(payload)
-    #     re_dict["name"] = user.name if user.name else user.username
-    #
-    #     headers = self.get_success_headers(serializer.data)
-    #     return Response(re_dict, status=status.HTTP_201_CREATED, headers=headers)
-    #
-    # def get_object(self):
-    #     return self.request.user
-    #
-    # def perform_create(self, serializer):
-    #     return serializer.save()
+
+    # 重写 create 函数来完成注册后自动登录功能
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = self.perform_create(serializer)
+
+        """
+        此处重写的源码分析以及 相关的逻辑
+        详情点击此博客 
+        https://www.cnblogs.com/shijieli/p/10726194.html
+        """
+        re_dict = serializer.data
+        payload = jwt_payload_handler(user)
+        # token 的添加只能用此方法, 此方法通过源码阅读查找到位置为
+        re_dict["token"] = jwt_encode_handler(payload)
+        # 自定义一个字段加入进去
+        re_dict["name"] = user.name if user.name else user.username
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(re_dict, status=status.HTTP_201_CREATED, headers=headers)
+
+    def get_object(self):
+        return self.request.user
+
+    def perform_create(self, serializer):
+        return serializer.save()
