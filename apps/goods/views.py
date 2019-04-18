@@ -24,7 +24,7 @@ class GoodsPagination(PageNumberPagination):
 
 
 # 商品列表
-class GoodsListViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
+class GoodsListViewset(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = Goods.objects.all()  # 筛选  get_queryset 方法和此属性等效
     serializer_class = GoodsSerializer  # 序列化
     pagination_class = GoodsPagination  # 分页
@@ -47,7 +47,6 @@ class GoodsListViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
     """
     ordering_fields = ('sold_num', 'shop_price')  # 设置排序字段
     # authentication_classes = (TokenAuthentication,)  # 设置当前视图的认证方式
-
 
     # queryset 属性写了的话就不需要重写此方法
     # 但是如果想自定义过滤规则则需要重写 get_queryset 方法

@@ -17,7 +17,6 @@ from django.conf.urls import url, include
 
 # from django.contrib import admin
 import xadmin
-from YtShop.settings import MEDIA_ROOT
 from django.views.static import serve
 from rest_framework.documentation import include_docs_urls
 from rest_framework.routers import DefaultRouter
@@ -25,6 +24,8 @@ from rest_framework.authtoken import views
 from rest_framework_jwt.views import obtain_jwt_token
 from goods.views import GoodsListViewset, CategoryViewset
 from users.views import SmsCodeViewset, UserViewset
+from YtShop.settings import MEDIA_ROOT
+from user_operation.views import UserFavViewset
 
 # 使用 routers 的方式
 router = DefaultRouter()
@@ -41,6 +42,10 @@ router.register(r'codes', SmsCodeViewset, base_name="codes")
 
 # 配置用户注册的 url
 router.register(r'users', UserViewset, base_name="users")
+
+# 配置用户收藏的 url
+router.register(r'userfavs', UserFavViewset, base_name="userfavs")
+
 
 # 利用 routers 之后就不需要这样手动指定了
 # 此方法必须要求继承 GenericViewSet 或者 ModelViewSet
