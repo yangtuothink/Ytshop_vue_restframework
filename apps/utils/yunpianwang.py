@@ -1,6 +1,4 @@
 # _*_ coding:utf-8 _*_
-from YtShop.settings import APIKEY
-
 __author__ = "yangtuo"
 __date__ = "2019/4/15 20:25"
 import requests
