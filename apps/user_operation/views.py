@@ -10,11 +10,23 @@ from utils.permissions import IsOwnerOrReadOnly
 
 
 # 用户收藏功能
-class UserFavViewset(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
+class UserFavViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
+                     mixins.DestroyModelMixin, viewsets.GenericViewSet):
+    """
+    list:
+        获取用户收藏列表
+    retrieve:
+        判断某个商品是否已经收藏
+    create:
+        收藏商品
+    destroy:
+        取消商品收藏
+    """
     # queryset = UserFav.objects.all() # 只能看自己的收藏记录
     permission_classes = (IsAuthenticated, IsOwnerOrReadOnly)
     serializer_class = UserFavSerializer
     authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
+    lookup_field = "goods_id"
 
     def get_queryset(self):
         return UserFav.objects.filter(user=self.request.user)

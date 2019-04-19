@@ -4,14 +4,14 @@ from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 
-from rest_framework import viewsets, status, mixins
-from rest_framework.mixins import CreateModelMixin
+from rest_framework import viewsets, status, mixins, permissions, authentication
 from rest_framework.response import Response
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
 
 from YtShop.settings import APIKEY
 from users.models import VerifyCode
-from users.serializers import SmsSerializer, UserRegSerializer
+from users.serializers import SmsSerializer, UserRegSerializer, UserDetailSerializer
 from utils.yunpianwang import YunPian
 
 User = get_user_model()
@@ -31,7 +31,7 @@ class CustomBackend(ModelBackend):
 
 
 # 发送短信验证码
-class SmsCodeViewset(CreateModelMixin, viewsets.GenericViewSet):
+class SmsCodeViewset(mixins.CreateModelMixin, viewsets.GenericViewSet):
     serializer_class = SmsSerializer
 
     # 生成四位数字的验证码
@@ -70,27 +70,31 @@ class SmsCodeViewset(CreateModelMixin, viewsets.GenericViewSet):
 
 
 # 用户视图
-class UserViewset(CreateModelMixin, mixins.UpdateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class UserViewset(mixins.CreateModelMixin, mixins.UpdateModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     serializer_class = UserRegSerializer
     queryset = User.objects.all()
-    # authentication_classes = (JSONWebTokenAuthentication, authentication.SessionAuthentication)
-    #
-    # def get_serializer_class(self):
-    #     if self.action == "retrieve":
-    #         return UserDetailSerializer
-    #     elif self.action == "create":
-    #         return UserRegSerializer
-    #
-    #     return UserDetailSerializer
-    #
-    # # permission_classes = (permissions.IsAuthenticated, )
-    # def get_permissions(self):
-    #     if self.action == "retrieve":
-    #         return [permissions.IsAuthenticated()]
-    #     elif self.action == "create":
-    #         return []
-    #
-    #     return []
+
+    authentication_classes = (JSONWebTokenAuthentication, authentication.SessionAuthentication)
+
+    # 用户中心的个人详情数据不能再基于统一设置的 UserRegSerializer 了
+    # 用户注册和 用户详情分为了两个序列化组件
+    # self.action 必须要继承了 ViewSetMixin 才有此功能
+    # get_serializer_class 的源码位置在 GenericAPIView 中
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return UserDetailSerializer
+        elif self.action == "create":
+            return UserRegSerializer
+        return UserDetailSerializer
+
+    # permission_classes = (permissions.IsAuthenticated, )  # 因为根据类型的不同权限的认证也不同, 不能再统一设置了
+    # get_permissions 的源码在 APIview 中
+    def get_permissions(self):
+        if self.action == "retrieve":
+            return [permissions.IsAuthenticated()]
+        elif self.action == "create":
+            return []
+        return []
 
     # 重写 create 函数来完成注册后自动登录功能
     def create(self, request, *args, **kwargs):
@@ -113,6 +117,7 @@ class UserViewset(CreateModelMixin, mixins.UpdateModelMixin, mixins.RetrieveMode
         headers = self.get_success_headers(serializer.data)
         return Response(re_dict, status=status.HTTP_201_CREATED, headers=headers)
 
+    # 因为要涉及到 个人中心的操作需要传递过去 用户的 id, 重写 get_object 来实现
     def get_object(self):
         return self.request.user
 

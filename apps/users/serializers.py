@@ -41,10 +41,11 @@ class SmsSerializer(serializers.Serializer):
 
 
 # 用户详情信息序列化类
-# class UserDetailSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ("name", "gender", "birthday", "email", "mobile")
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("name", "gender", "birthday", "email", "mobile")
+
 
 # 用户注册
 class UserRegSerializer(serializers.ModelSerializer):
