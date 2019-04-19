@@ -1,6 +1,8 @@
 # _*_ coding:utf-8 _*_
 from rest_framework.validators import UniqueTogetherValidator
 
+from goods.serializers import GoodsSerializer
+
 __author__ = "yangtuo"
 __date__ = "2019/4/18 20:31"
 
@@ -9,6 +11,16 @@ from rest_framework import serializers
 from .models import UserFav
 
 
+# 收藏详情
+class UserFavDetailSerializer(serializers.ModelSerializer):
+    goods = GoodsSerializer()
+
+    class Meta:
+        model = UserFav
+        fields = ("goods", "id")
+
+
+# 用户收藏
 class UserFavSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(
         default=serializers.CurrentUserDefault()

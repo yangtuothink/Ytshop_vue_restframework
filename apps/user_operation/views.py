@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import SessionAuthentication
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
-from .serializers import UserFavSerializer
+from .serializers import UserFavSerializer, UserFavDetailSerializer
 from .models import UserFav
 from utils.permissions import IsOwnerOrReadOnly
 
@@ -27,6 +27,14 @@ class UserFavViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.Retr
     serializer_class = UserFavSerializer
     authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
     lookup_field = "goods_id"
+
+    # 分流处理 序列化组件
+    def get_serializer_class(self):
+        if self.action == "list":
+            return UserFavDetailSerializer
+        elif self.action == "create":
+            return UserFavSerializer
+        return UserFavSerializer
 
     def get_queryset(self):
         return UserFav.objects.filter(user=self.request.user)
