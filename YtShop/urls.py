@@ -25,7 +25,7 @@ from rest_framework_jwt.views import obtain_jwt_token
 from goods.views import GoodsListViewset, CategoryViewset
 from users.views import SmsCodeViewset, UserViewset
 from YtShop.settings import MEDIA_ROOT
-from user_operation.views import UserFavViewset
+from user_operation.views import UserFavViewset, LeavingMessageViewset, AddressViewset
 
 # 使用 routers 的方式
 router = DefaultRouter()
@@ -46,6 +46,11 @@ router.register(r'users', UserViewset, base_name="users")
 # 配置用户收藏的 url
 router.register(r'userfavs', UserFavViewset, base_name="userfavs")
 
+# 留言
+router.register(r'messages', LeavingMessageViewset, base_name="messages")
+
+# 收货地址
+router.register(r'address', AddressViewset, base_name="address")
 
 # 利用 routers 之后就不需要这样手动指定了
 # 此方法必须要求继承 GenericViewSet 或者 ModelViewSet

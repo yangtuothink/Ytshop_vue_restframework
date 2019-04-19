@@ -8,7 +8,7 @@ __date__ = "2019/4/18 20:31"
 
 from rest_framework import serializers
 
-from .models import UserFav
+from .models import UserFav, UserLeavingMessage, UserAddress
 
 
 # 收藏详情
@@ -38,3 +38,28 @@ class UserFavSerializer(serializers.ModelSerializer):
             )
         ]
         fields = ("user", "goods", "id")  # 删除的需要因此加上 id, 这样方便删除操作
+
+
+# 用户留言
+class LeavingMessageSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+    # 留言的时间不能自己指定, 应该是系统自动根据当前的时间, 因此设置为只读
+    add_time = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M')
+
+    class Meta:
+        model = UserLeavingMessage
+        fields = ("user", "message_type", "subject", "message", "file", "id", "add_time")
+
+
+# 收货地址
+class AddressSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+    add_time = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M')
+
+    class Meta:
+        model = UserAddress
+        fields = ("id", "user", "province", "city", "district", "address", "signer_name", "add_time", "signer_mobile")
