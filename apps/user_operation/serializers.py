@@ -22,6 +22,7 @@ class UserFavDetailSerializer(serializers.ModelSerializer):
 
 # 用户收藏
 class UserFavSerializer(serializers.ModelSerializer):
+    # 用户就使用当前的默认用户, 并且设置为隐藏
     user = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
     )

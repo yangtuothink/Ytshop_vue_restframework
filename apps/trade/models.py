@@ -8,13 +8,8 @@ from goods.models import Goods
 User = get_user_model()
 
 
-# Create your models here.
-
-
+# 购物车
 class ShoppingCart(models.Model):
-    """
-    购物车
-    """
     user = models.ForeignKey(User, verbose_name=u"用户")
     goods = models.ForeignKey(Goods, verbose_name=u"商品")
     nums = models.IntegerField(default=0, verbose_name="购买数量")
@@ -24,16 +19,14 @@ class ShoppingCart(models.Model):
     class Meta:
         verbose_name = '购物车'
         verbose_name_plural = verbose_name
-        unique_together = ("user", "goods")
+        unique_together = ("user", "goods")  # 一个商品不应该在购物车中重复
 
     def __str__(self):
         return "%s(%d)".format(self.goods.name, self.nums)
 
 
+# 订单
 class OrderInfo(models.Model):
-    """
-    订单
-    """
     ORDER_STATUS = (
         ("TRADE_SUCCESS", "成功"),
         ("TRADE_CLOSED", "超时关闭"),
@@ -65,10 +58,8 @@ class OrderInfo(models.Model):
         return str(self.order_sn)
 
 
+# 订单的商品详情
 class OrderGoods(models.Model):
-    """
-    订单的商品详情
-    """
     order = models.ForeignKey(OrderInfo, verbose_name="订单信息", related_name="goods")
     goods = models.ForeignKey(Goods, verbose_name="商品")
     goods_num = models.IntegerField(default=0, verbose_name="商品数量")

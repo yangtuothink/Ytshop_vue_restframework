@@ -26,31 +26,35 @@ from goods.views import GoodsListViewset, CategoryViewset
 from users.views import SmsCodeViewset, UserViewset
 from YtShop.settings import MEDIA_ROOT
 from user_operation.views import UserFavViewset, LeavingMessageViewset, AddressViewset
+from trade.views import ShoppingCartViewset
 
 # 使用 routers 的方式
 router = DefaultRouter()
 
-# 配置 goods 的 url
+# 商品的 url
 # 注册后就不需要每个都写一个 url 了.这样集合一个就可以了
 router.register(r'goods', GoodsListViewset, base_name="goods")
 
-# 配置 categorys 的 url
+# 商品分类的 url
 router.register(r'categorys', CategoryViewset, base_name="categorys")
 
-# 配置手机验证码发送 的 url
+# 手机验证码发送 的 url
 router.register(r'codes', SmsCodeViewset, base_name="codes")
 
-# 配置用户注册的 url
+# 用户注册的 url
 router.register(r'users', UserViewset, base_name="users")
 
-# 配置用户收藏的 url
+# 用户收藏的 url
 router.register(r'userfavs', UserFavViewset, base_name="userfavs")
 
-# 留言
+# 留言的 url
 router.register(r'messages', LeavingMessageViewset, base_name="messages")
 
-# 收货地址
+# 收货地址的 url
 router.register(r'address', AddressViewset, base_name="address")
+
+# 购物车的 url
+router.register(r'shopcarts', ShoppingCartViewset, base_name="shopcarts")
 
 # 利用 routers 之后就不需要这样手动指定了
 # 此方法必须要求继承 GenericViewSet 或者 ModelViewSet
